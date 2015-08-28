@@ -6,7 +6,7 @@ var prompt = require('prompt-sync').prompt;
 var board={};
 
 battleships.setup(board);
-
+console.log(board); // LEAVING IN THE PRINT STATEMENT OF THE INTIAL BOARD FOR EASIER TESTING
 
 // GAME LOOP
 while(Object.keys(board).length > 0) {

@@ -5,8 +5,6 @@ module.exports.setup = function(board) {
     for (var i in conf.ships) {
         board[i] = generateShip(conf.letters, conf.column_count, conf.ships[i], board);
     };
-
-    console.log(board); // LEAVING IN THE PRINT STATEMENT OF THE INTIAL BOARD FOR EASIER TESTING
 };
 
 // GENERATE A NEW SHIP
@@ -14,15 +12,15 @@ module.exports.setup = function(board) {
 // RECURSIVELY KEEP TRYING UNTIL IT WORKS
 function generateShip(letters, column_count, length, board) {
 
-    var ship = placeShip(letters, column_count, length);
-    if (overlap(board, ship)) {
+    var ship = module.exports.placeShip(letters, column_count, length);
+    if (module.exports.overlap(board, ship)) {
         return generateShip(letters, column_count, length, board);
     } else {
         return ship;
     };
 };
 
-function placeShip(letters, column_count, length ) {
+module.exports.placeShip = function(letters, column_count, length ) {
 
     var ship = [];
 
@@ -66,7 +64,7 @@ function placeShip(letters, column_count, length ) {
 };
 
 // CHECK IF A NEW SHIP OVERLAPS WITH ANY OTHER REGISTERED SHIPS ON THE BOARD
-function overlap(board, ship) {
+module.exports.overlap = function(board, ship) {
 
     // IF FIRST SHIP --> RETURN
     if (Object.keys(board).length == 0) {
@@ -97,7 +95,7 @@ function overlap(board, ship) {
 module.exports.shoot = function(board, input) {
 
     // VALIDATE USER INPUT
-    if (input.match(/[a-zA-Z][0-9]/g)) {
+    if (input.match(/[a-zA-Z][1-9]/g)) {
 
         for (var i in board) {
             for (var j=0; j<board[i].length; j++) {
@@ -118,6 +116,6 @@ module.exports.shoot = function(board, input) {
         };
 
     } else {
-        return 'PLEASE SUPPLY INPUT IN THE FORM OF LETTER PLUS NUMBER 1-10 (e.g. A5)';
+        return 'PLEASE SUPPLY INPUT IN THE FORM OF LETTER PLUS NUMBER 1-' + conf.column_count +  ' (e.g. A5)';
     };
 };
