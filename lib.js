@@ -1,17 +1,28 @@
+var conf = require('./config.js').config;
+
 module.exports.setup = function(board) {
 
-    // TODO: CHECK SHIPS DON'T OVERLAP
+    for (var i in conf.ships) {
+        board[i] = generateShip(conf.letters, conf.column_count, conf.ships[i], board);
+    };
 
-    var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
-
-    board.a = placeShip(letters, 5);
-    board.b = placeShip(letters, 4);
-    board.c = placeShip(letters, 4);
-
-    console.log(board);
+    console.log(board); // LEAVING IN THE PRINT STATEMENT OF THE INTIAL BOARD FOR EASIER TESTING
 };
 
-function placeShip(letters, length) {
+// GENERATE A NEW SHIP
+// CHECK IF IT OVERLAPS WITH EXISTING
+// RECURSIVELY KEEP TRYING UNTIL IT WORKS
+function generateShip(letters, column_count, length, board) {
+
+    var ship = placeShip(letters, column_count, length);
+    if (overlap(board, ship)) {
+        generateShip(letters, column_count, length, board);
+    } else {
+        return ship;
+    };
+};
+
+function placeShip(letters, column_count, length ) {
 
     var ship = [];
 
@@ -22,11 +33,13 @@ function placeShip(letters, length) {
     if(orientation == 0) {
 
         // CHOOSE STARTING LETTER (ROW)
-        var startRow = Math.round(Math.random()*9);
+        var offset = letters.length - length; // MAKE SURE SHIP FITS THE BOARD
+        var startRow = Math.round(Math.random() * offset);
 
         // CHOOSE NUMBER (COLUMN)
-        var col = Math.round(Math.random()*10) + 1;
+        var col = Math.round(Math.random() * (column_count - 1)) + 1; // RAND 1 - 10
 
+        // CREATE THE ARRAY OF COORDS REPRESENTING A SHIP
         for (var i=0; i<length;i++) {
             ship.push(letters[startRow + i] + col);
         };
@@ -37,36 +50,69 @@ function placeShip(letters, length) {
     } else {
 
         // CHOOSE LETTER (ROW)
-        var startRow = letters[Math.round(Math.random()*9)];
+        var startRow = letters[Math.round(Math.random() * (letters.length - 1))];
 
         // CHOOSE STARTING NUMBER (COLUMN)
-        var col = Math.round(Math.random()*10) + 1;
+        var offset = column_count - length; // MAKE SURE SHIP FITS ThE BOARD
+        var col = Math.round(Math.random() * offset) + 1;
 
+        // CREATE THE ARRAY OF COORDS REPRESENTING A SHIP
         for (var i=0; i<length;i++) {
             ship.push(startRow + (col + i));
         };
 
-        return ship
+        return ship;
     };
 };
 
-module.exports.shoot = function(board, input) {
+// CHECK IF A NEW SHIP OVERLAPS WITH ANY OTHER REGISTERED SHIPS ON THE BOARD
+function overlap(board, ship) {
 
-    for(var i in board) {
-        for (var j=0; j<board[i].length; j++) {
+    // LOOP THROUGH ALL REGISTERED SHIP ON THE BOARD
+    for (var sh in  board) {
+        // IF REGISTERED SHIP ON BOARD IS LONGER THAN CURRENT SHIP
+        // WE ONLY DO AN EXTRA PASS, IF SHORTER, UNIQENESS IS STILL IDENTIFIED
+        for (var i=0; i<board[sh].length; i++) {
 
-            // REMOVE SEGMENT FROM SHIP
-            if(input == board[i][j]) {
-                board[i].splice(j, 1);
-
-                //CHECK IF SHIP IS DESTROYED
-                if(board[i].length == 0) {
-                    delete board[i];
-                    return 'SHIP IS DESTROYED';
+            for (var j=0; j<ship.length; j++) {
+                if (board[sh][i] == ship[j]) {
+                    return true;
+                } else {
+                    continue;
                 };
-
-                return 'HIT!';
             };
         };
+    };
+
+    return false;
+};
+
+// TAKE A SHOT AT A TARGET
+// CHECK IF A HIT HAS BEEN MADE AND IF THE SHIP HAS BEEN DESTROYED
+module.exports.shoot = function(board, input) {
+
+    // VALIDATE USER INPUT
+    if (input.match(/[a-zA-Z][0-9]/g)) {
+
+        for (var i in board) {
+            for (var j=0; j<board[i].length; j++) {
+
+                // REMOVE SEGMENT FROM SHIP WHEN HIT
+                if(input.toLowerCase() == board[i][j]) {
+                    board[i].splice(j, 1);
+
+                    //CHECK IF SHIP IS DESTROYED
+                    if(board[i].length == 0) {
+                        delete board[i];
+                        return 'SHIP IS DESTROYED';
+                    };
+
+                    return 'HIT!';
+                };
+            };
+        };
+
+    } else {
+        return 'PLEASE SUPPLY INPUT IN THE FORM OF LETTER PLUS NUMBER 1-10 (e.g. A5)';
     };
 };

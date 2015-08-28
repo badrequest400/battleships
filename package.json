@@ -1,0 +1,22 @@
+{
+  "name": "battleships",
+  "version": "1.0.0",
+  "description": "A simple one-sided battleship game",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/badrequest400/battleships.git"
+  },
+  "author": "Balazs Cseh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/badrequest400/battleships/issues"
+  },
+  "homepage": "https://github.com/badrequest400/battleships",
+  "dependencies": {
+    "prompt-sync": "^2.1.0"
+  }
+}
