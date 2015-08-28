@@ -16,7 +16,7 @@ function generateShip(letters, column_count, length, board) {
 
     var ship = placeShip(letters, column_count, length);
     if (overlap(board, ship)) {
-        generateShip(letters, column_count, length, board);
+        return generateShip(letters, column_count, length, board);
     } else {
         return ship;
     };
@@ -67,6 +67,11 @@ function placeShip(letters, column_count, length ) {
 
 // CHECK IF A NEW SHIP OVERLAPS WITH ANY OTHER REGISTERED SHIPS ON THE BOARD
 function overlap(board, ship) {
+
+    // IF FIRST SHIP --> RETURN
+    if (Object.keys(board).length == 0) {
+        return false;
+    };
 
     // LOOP THROUGH ALL REGISTERED SHIP ON THE BOARD
     for (var sh in  board) {

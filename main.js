@@ -19,3 +19,7 @@ while(Object.keys(board).length > 0) {
         console.log(battleships.shoot(board, pr));
     };
 };
+
+if (Object.keys(board).length == 0) {
+    console.log('CONGRATULATIONS YOU HAVE SUNK ALL THE ENEMY\'S SHIPS');
+};
